@@ -4,7 +4,7 @@ const nextConfig = {
         domains: ['lh3.googleusercontent.com'], // For Google provider images
     },
     eslint: {
-        ignoreDuringBuilds: ['/myproject']
+        ignoreDuringBuilds: true
     },
 
 }

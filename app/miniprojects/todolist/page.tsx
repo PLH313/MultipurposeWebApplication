@@ -179,7 +179,7 @@ export default function TodoList() {
                                         type="text"
                                         value={editText}
                                         onChange={(e) => setEditText(e.target.value)}
-                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                        className="w-full px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                                     />
                                     {error && <p className="text-red-500 text-sm">{error}</p>}
                                     <div className="flex flex-col sm:flex-row gap-3">
@@ -187,7 +187,7 @@ export default function TodoList() {
                                             type="date"
                                             value={editDeadline}
                                             onChange={(e) => setEditDeadline(e.target.value)}
-                                            className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                                            className="px-4 py-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-black"
                                         />
                                         <div className="flex gap-3">
                                             <button

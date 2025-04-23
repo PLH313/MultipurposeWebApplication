@@ -1,27 +1,10 @@
-﻿import NextAuth, { type NextAuthOptions } from "next-auth"
+﻿// app/api/auth/[...nextauth]/route.ts
+import NextAuth from "next-auth"
 import { PrismaAdapter } from "@next-auth/prisma-adapter"
 import prisma from "@/lib/prisma"
 import CredentialsProvider from "next-auth/providers/credentials"
 import GoogleProvider from "next-auth/providers/google"
-import type { DefaultSession, DefaultUser } from "next-auth"
-
-declare module "next-auth" {
-    interface Session extends DefaultSession {
-        user?: {
-            id: string
-        } & DefaultSession["user"]
-    }
-
-    interface User extends DefaultUser {
-        id: string
-    }
-}
-
-declare module "next-auth/jwt" {
-    interface JWT {
-        id: string
-    }
-}
+import { NextAuthOptions } from "next-auth"
 
 export const authOptions: NextAuthOptions = {
     adapter: PrismaAdapter(prisma),
@@ -45,21 +28,21 @@ export const authOptions: NextAuthOptions = {
             },
             async authorize(credentials) {
                 if (!credentials?.email || !credentials?.password) {
-                    throw new Error('Email and password are required')
+                    return null
                 }
 
                 const user = await prisma.user.findUnique({
                     where: { email: credentials.email }
                 })
-                if (!user) {
-                    throw new Error('User not found')
+
+                if (!user || user.password !== credentials.password) {
+                    return null
                 }
-                if (user.password !== credentials.password) {
-                    throw new Error('Incorrect password')
-                }
+
                 if (!user.emailVerified) {
                     throw new Error('Please verify your email first')
                 }
+
                 return {
                     id: user.id,
                     name: user.name,
@@ -69,19 +52,13 @@ export const authOptions: NextAuthOptions = {
         })
     ],
     callbacks: {
-        async session({ session, token }) {
-            // Send user ID to client
-            if (session.user && token.sub) {
-                session.user.id = token.sub
+        session: ({ session, token }) => ({
+            ...session,
+            user: {
+                ...session.user,
+                id: token.sub
             }
-            return session
-        },
-        async jwt({ token, user }) {
-            if (user) {
-                token.sub = user.id
-            }
-            return token
-        }
+        })
     },
     session: {
         strategy: "jwt",
@@ -93,5 +70,7 @@ export const authOptions: NextAuthOptions = {
     },
     secret: process.env.NEXTAUTH_SECRET,
 }
+
 const handler = NextAuth(authOptions)
+
 export { handler as GET, handler as POST }
