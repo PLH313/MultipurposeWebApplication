@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import Link from 'next/link'
 import DeleteButton from '@/components/DeleteButton'
-export default async function PostPage({ params }: { params: { slug: string } }) {
+export default async function PostPage({ params }: { params:Promise<{ slug: string }>;}) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
