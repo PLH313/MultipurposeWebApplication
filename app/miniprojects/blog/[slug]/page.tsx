@@ -4,14 +4,13 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import Link from 'next/link'
 import DeleteButton from '@/components/DeleteButton'
-export default async function PostPage(props: { params: Promise<{ slug: string }> }) {
+export default async function PostPage({ params }: { params: { slug: string } }) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
         redirect('/auth/signin')
     }
-
-    const { slug } = await props.params  // ✅ await the params
+    const { slug } = await params;
 
     const post = await getPostBySlug(slug, session.user.id)
 
@@ -52,10 +51,15 @@ export default async function PostPage(props: { params: Promise<{ slug: string }
             </article>
 
             <div className="mt-12 pt-6 border-t border-indigo-100">
+                {/* <Link
+                    href="/miniprojects/blog"
+                    className="bg-gradient-to-r from-indigo-100 to-purple-100 text-indigo-600 px-6 py-3 rounded-lg inline-block hover:shadow-md transition-all"
+                >
+                    ← Back to all posts
+                </Link> */}
                 <Link
                     href={`/miniprojects/blog/${post.slug}/edit`}
-                    className="inline-flex items-center justify-center min-w-[140px] bg-gradient-to-r from-green-100 to-blue-100 text-green-600 px-6 py-3 rounded-lg hover:shadow-md transition-all"
-                >
+                    className="inline-flex items-center justify-center min-w-[140px] bg-gradient-to-r from-green-100 to-blue-100 text-green-600 px-6 py-3 rounded-lg hover:shadow-md transition-all"                >
                     ✏️ Edit Post
                 </Link>
                 <DeleteButton postId={post.id} />
