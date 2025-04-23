@@ -1,7 +1,7 @@
 ﻿import Link from 'next/link'
 import { getPosts } from './actions'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import { redirect } from 'next/navigation'
 
 export default async function BlogPage() {

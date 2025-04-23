@@ -1,7 +1,7 @@
 ﻿import { notFound, redirect } from 'next/navigation'
 import { getPostBySlug} from '../actions'
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import Link from 'next/link'
 import DeleteButton from '@/components/DeleteButton'
 export default async function PostPage({ params }: { params: { slug: string } }) {

@@ -2,7 +2,7 @@
 'use server'
 
 import { getServerSession } from 'next-auth'
-import { authOptions } from '@/app/api/auth/[...nextauth]/route'
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import prisma from '@/lib/prisma'
 import { put } from '@vercel/blob'
 import { revalidatePath } from 'next/cache'
