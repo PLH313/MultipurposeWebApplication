@@ -7,6 +7,7 @@ import prisma from '@/lib/prisma'
 import { put } from '@vercel/blob'
 import { revalidatePath } from 'next/cache'
 
+// app/miniprojects/gallery/actions.ts
 export async function uploadImage(formData: FormData) {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) throw new Error('Unauthorized')
@@ -14,9 +15,12 @@ export async function uploadImage(formData: FormData) {
     const file = formData.get('file') as File
     const caption = formData.get('caption') as string
 
-    // Upload to Vercel Blob Storage (or your preferred storage)
-    const blob = await put(file.name, file, {
+    const uniqueFilename = `users/${session.user.id}/${file.name}`
+
+    const blob = await put(uniqueFilename, file, {
         access: 'public',
+        addRandomSuffix: true,
+        contentType: file.type
     })
 
     await prisma.image.create({
@@ -29,7 +33,6 @@ export async function uploadImage(formData: FormData) {
 
     revalidatePath('/miniprojects/gallery')
 }
-
 export async function getImages(userId: string) {
     return await prisma.image.findMany({
         where: { userId },
@@ -48,4 +51,45 @@ export async function deleteImage(imageId: string) {
         }
     })
     revalidatePath('/miniprojects/gallery')
+}
+
+export async function getImageById(id: string) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) throw new Error('Unauthorized')
+
+    return await prisma.image.findUnique({
+        where: {
+            id,
+            userId: session.user.id
+        }
+    })
+}
+
+export async function updateImage(
+    id: string,
+    data: {
+        caption: string
+        file?: File
+        userId: string
+    }
+) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user?.id) throw new Error('Unauthorized')
+
+    const updateData: any = { caption: data.caption }
+
+    if (data.file) {
+        const uniqueFilename = `users/${session.user.id}/${data.file.name}`
+        const blob = await put(uniqueFilename, data.file, {
+            access: 'public',
+            addRandomSuffix: true,
+            contentType: data.file.type
+        })
+        updateData.url = blob.url
+    }
+
+    return await prisma.image.update({
+        where: { id, userId: data.userId },
+        data: updateData
+    })
 }
