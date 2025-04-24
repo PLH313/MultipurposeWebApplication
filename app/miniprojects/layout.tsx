@@ -9,14 +9,15 @@ export default function ProjectsLayout({
         <div className="flex min-h-screen">
             {/* Side Menu */}
             <div className="w-64 bg-gray-100 dark:bg-gray-800 p-4">
-                <h2 className="text-xl font-bold mb-6">Mini Projects</h2>
+                <Link
+                    href="/miniprojects"
+                    className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                >
+                    Overview
+                </Link>
+                <h2 className="text-lg font-semibold mt-2 mb-2 px-4">Mini Projects</h2>
                 <nav className="space-y-2">
-                    <Link
-                        href="/miniprojects"
-                        className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                    >
-                        Overview
-                    </Link>
+
                     <Link
                         href="/miniprojects/todolist"
                         className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -35,19 +36,25 @@ export default function ProjectsLayout({
                     >
                         Gallery
                     </Link>
-                    {/* New Pages */}
-                    <Link
-                        href="/miniprojects/estore"
-                        className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                    >
-                        E-Store
-                    </Link>
-                    <Link
-                        href="/miniprojects/productmanagement"
-                        className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
-                    >
-                        Product Management
-                    </Link>
+
+                    {/* Book Store Project Section */}
+                    <div className="mt-6">
+                        <h3 className="text-lg font-semibold mb-2 px-4">E-Commerce Page</h3>
+                        <div className="space-y-2">
+                            <Link
+                                href="/miniprojects/estore"
+                                className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                            >
+                                Book Store
+                            </Link>
+                            <Link
+                                href="/miniprojects/productmanagement"
+                                className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                            >
+                                Product Management
+                            </Link>
+                        </div>
+                    </div>
                 </nav>
             </div>
 
