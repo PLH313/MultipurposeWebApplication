@@ -9,14 +9,16 @@ async function main() {
             { name: 'Non-Fiction', slug: 'non-fiction' },
             { name: 'Science Fiction', slug: 'sci-fi' },
             { name: 'Biography', slug: 'biography' },
+            { name: 'Self-Help', slug: 'self-help' },
+            { name: 'History', slug: 'history' },
+            { name: 'Fantasy', slug: 'fantasy' },
+            { name: 'Mystery', slug: 'mystery' },
         ],
         skipDuplicates: true,
     })
 
-    // Get created categories
     const categories = await prisma.category.findMany()
 
-    // Create sample books
     await prisma.product.createMany({
         data: [
             {
@@ -43,11 +45,58 @@ async function main() {
                 stock: 75,
                 categoryId: categories.find(c => c.slug === 'sci-fi')!.id,
             },
+            {
+                title: '7 Thói Quen Hiệu Quả',
+                author: 'Stephen R. Covey',
+                description: 'Hướng dẫn thực hành để nâng cao hiệu suất cá nhân',
+                price: 135000,
+                stock: 60,
+                categoryId: categories.find(c => c.slug === 'self-help')!.id,
+            },
+            {
+                title: 'Sapiens: Lược Sử Loài Người',
+                author: 'Yuval Noah Harari',
+                description: 'Khám phá hành trình tiến hóa của loài người',
+                price: 170000,
+                stock: 45,
+                categoryId: categories.find(c => c.slug === 'history')!.id,
+            },
+            {
+                title: 'Tôi Thấy Hoa Vàng Trên Cỏ Xanh',
+                author: 'Nguyễn Nhật Ánh',
+                description: 'Một câu chuyện tuổi thơ đậm chất Việt',
+                price: 95000,
+                stock: 80,
+                categoryId: categories.find(c => c.slug === 'fiction')!.id,
+            },
+            {
+                title: 'Game of Thrones',
+                author: 'George R. R. Martin',
+                description: 'Tập đầu tiên của loạt truyện fantasy hoành tráng',
+                price: 180000,
+                stock: 30,
+                categoryId: categories.find(c => c.slug === 'fantasy')!.id,
+            },
+            {
+                title: 'Sherlock Holmes: Tập Truyện Ngắn',
+                author: 'Arthur Conan Doyle',
+                description: 'Tuyển tập các vụ án phá án ly kỳ',
+                price: 110000,
+                stock: 70,
+                categoryId: categories.find(c => c.slug === 'mystery')!.id,
+            },
+            {
+                title: 'Steve Jobs',
+                author: 'Walter Isaacson',
+                description: 'Tiểu sử chính thức về nhà sáng lập Apple',
+                price: 160000,
+                stock: 40,
+                categoryId: categories.find(c => c.slug === 'biography')!.id,
+            },
         ],
         skipDuplicates: true,
     })
 }
-
 
 main()
     .catch(e => {

@@ -9,7 +9,6 @@ export default function NewProductPage() {
 
     const handleSubmit = async (formData: FormData) => {
         try {
-            // Your createProduct action
             await createProduct(formData)
             router.push('/miniprojects/productmanagement')
         } catch (error) {

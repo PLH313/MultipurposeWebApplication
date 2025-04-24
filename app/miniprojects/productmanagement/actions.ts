@@ -5,20 +5,62 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import { revalidatePath } from 'next/cache'
 import { put } from '@vercel/blob'
+import { ProductList } from '@/types/product'
+import { ProductDetail } from '@/types/product'
+export async function getProducts(options?: {
+    category?: string
+    search?: string
+    page?: number
+    limit?: number
+    exclude?: string
+}): Promise<ProductList[]> {
+    const where: any = {}
 
-export async function getProducts(categorySlug?: string) {
-    const products = await prisma.product.findMany({
-        where: categorySlug ? { category: { slug: categorySlug } } : {},
-        include: { category: true },
+    if (options?.category && options.category !== 'all') {
+        where.category = { name: options.category }
+    }
+
+    if (options?.search) {
+        where.OR = [
+            { title: { contains: options.search, mode: 'insensitive' } },
+            { author: { contains: options.search, mode: 'insensitive' } }
+        ]
+    }
+
+    if (options?.exclude) {
+        where.id = { not: options.exclude }
+    }
+
+    const skip = options?.page && options?.limit
+        ? (options.page - 1) * options.limit
+        : 0
+
+    return prisma.product.findMany({
+        where,
+        select: {
+            id: true,
+            title: true,
+            author: true,
+            price: true,
+            stock: true,
+            imageUrl: true,
+            categoryId: true,
+            category: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true
+                }
+            }
+        },
+        skip,
+        take: options?.limit,
         orderBy: { createdAt: 'desc' }
-    })
-
-    return products.map(product => ({
-        ...product,
-        price: Number(product.price)
-    }))
+    }).then(products => products.map(p => ({
+        ...p,
+        price: Number(p.price)
+    })))
 }
-
 export async function createCategory(name: string, slug: string) {
     const session = await getServerSession(authOptions)
     if (!session?.user) throw new Error('Unauthorized')
@@ -73,7 +115,8 @@ export async function deleteProduct(id: string) {
     revalidatePath('/miniprojects/productmanagement')
 }
 
-export async function getProductById(id: string) {
+// In actions.ts
+export async function getProductById(id: string): Promise<ProductDetail | null> {
     const product = await prisma.product.findUnique({
         where: { id },
         select: {
@@ -83,8 +126,10 @@ export async function getProductById(id: string) {
             description: true,
             price: true,
             stock: true,
-            categoryId: true,
             imageUrl: true,
+            categoryId: true,
+            createdAt: true,
+            updatedAt: true,
             category: {
                 select: {
                     id: true,
@@ -100,7 +145,6 @@ export async function getProductById(id: string) {
         price: Number(product.price)
     } : null
 }
-
 export async function updateProduct(id: string, formData: FormData) {
     const session = await getServerSession(authOptions)
     if (!session?.user) throw new Error('Unauthorized')
@@ -137,4 +181,23 @@ export async function updateProduct(id: string, formData: FormData) {
     })
 
     revalidatePath('/miniprojects/productmanagement')
+}
+export async function getTotalProductsCount(options?: {
+    category?: string
+    search?: string
+}): Promise<number> {
+    const where: any = {}
+
+    if (options?.category && options.category !== 'all') {
+        where.category = { name: options.category }
+    }
+
+    if (options?.search) {
+        where.OR = [
+            { title: { contains: options.search, mode: 'insensitive' } },
+            { author: { contains: options.search, mode: 'insensitive' } }
+        ]
+    }
+
+    return prisma.product.count({ where })
 }

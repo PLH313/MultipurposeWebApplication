@@ -2,27 +2,19 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { createProduct, getCategories } from './actions'
 import Image from 'next/image'
+import { getCategories } from './actions'
 import { uploadProductFile } from '@/lib/blob'
+import { ProductFormType } from '@/types/product'
 
 interface ProductFormProps {
-    product?: {
-        id: string
-        title: string
-        author: string
-        description: string
-        price: number
-        stock: number
-        categoryId: string
-        imageUrl?: string
-    }
+    product?: ProductFormType
     onSubmit: (formData: FormData) => Promise<void>
 }
 
 export default function ProductForm({ product, onSubmit }: ProductFormProps) {
     const [categories, setCategories] = useState<Awaited<ReturnType<typeof getCategories>>>([])
-    const [imageUrl, setImageUrl] = useState(product?.imageUrl || '')
+    const [imageUrl, setImageUrl] = useState(product?.imageUrl ?? '')
     const router = useRouter()
 
     useEffect(() => {

@@ -4,40 +4,19 @@ import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { getProductById, updateProduct } from '../../actions'
 import ProductForm from '../../ProductForm'
-
-interface Product {
-    id: string
-    title: string
-    author: string
-    description: string
-    price: number
-    stock: number
-    categoryId: string
-    imageUrl?: string
-}
+import { ProductDetail } from '@/types/product' // Import shared type
 
 export default function EditProductPage() {
     const { id } = useParams()
     const router = useRouter()
-    const [product, setProduct] = useState<Product | null>(null)
+    const [product, setProduct] = useState<ProductDetail | null>(null)
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         const loadProduct = async () => {
             try {
                 const data = await getProductById(id as string)
-                if (data) {
-                    setProduct({
-                        id: data.id,
-                        title: data.title,
-                        author: data.author,
-                        description: data.description,
-                        price: Number(data.price),
-                        stock: data.stock,
-                        categoryId: data.categoryId,
-                        imageUrl: data.imageUrl || ''
-                    })
-                }
+                setProduct(data || null)
             } catch (error) {
                 console.error('Failed to load product:', error)
                 router.push('/miniprojects/productmanagement')
@@ -66,7 +45,10 @@ export default function EditProductPage() {
             <h1 className="text-3xl font-bold mb-6">Edit Product</h1>
             <div className="bg-white p-6 rounded-lg border border-gray-200">
                 <ProductForm
-                    product={product}
+                    product={{
+                        ...product,
+                        imageUrl: product.imageUrl ?? undefined // Convert null to undefined
+                    }}
                     onSubmit={handleSubmit}
                 />
             </div>

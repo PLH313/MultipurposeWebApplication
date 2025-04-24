@@ -6,22 +6,10 @@ import { PlusCircle } from 'lucide-react'
 import { getProducts, deleteProduct } from './actions'
 import { formatVND } from '@/utils/format'
 import Image from 'next/image'
+import { ProductList } from '@/types/product'
 
-interface Product {
-    id: string
-    title: string
-    author: string
-    price: number
-    stock: number
-    imageUrl?: string | null
-    category: {
-        name: string
-        id: string
-        slug: string
-    }
-}
 export default function ProductManagementPage() {
-    const [products, setProducts] = useState<Product[]>([])
+    const [products, setProducts] = useState<ProductList[]>([])
     const [loading, setLoading] = useState(true)
 
     const loadProducts = useCallback(async () => {
