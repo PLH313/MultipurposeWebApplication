@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import AuthStatus from '@/components/AuthStatus'
 import { Providers } from './providers'
+import { Toaster } from 'react-hot-toast'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -23,6 +24,21 @@ export default async function RootLayout({
             <main className="container mx-auto p-4">
                 {children}
             </main>
+
+            {/* Add Toaster here */}
+            <Toaster
+                position="bottom-right"
+                toastOptions={{
+                    style: {
+                        background: '#3b82f6',
+                        color: '#fff',
+                    },
+                    iconTheme: {
+                        primary: '#fff',
+                        secondary: '#3b82f6',
+                    }
+                }}
+            />
         </Providers>
         </body>
         </html>
