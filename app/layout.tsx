@@ -29,7 +29,6 @@ export default async function RootLayout({
     )
 }
 
-// Separate NavBar component
 function NavBar({ session }: { session: any }) {
     return (
         <nav className="bg-gray-800 text-white p-4">

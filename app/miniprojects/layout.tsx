@@ -35,6 +35,19 @@ export default function ProjectsLayout({
                     >
                         Gallery
                     </Link>
+                    {/* New Pages */}
+                    <Link
+                        href="/miniprojects/estore"
+                        className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                    >
+                        E-Store
+                    </Link>
+                    <Link
+                        href="/miniprojects/productmanagement"
+                        className="block px-4 py-2 rounded hover:bg-gray-200 dark:hover:bg-gray-700"
+                    >
+                        Product Management
+                    </Link>
                 </nav>
             </div>
 

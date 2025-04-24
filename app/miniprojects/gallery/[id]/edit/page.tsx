@@ -1,4 +1,5 @@
-﻿'use client'
+﻿//app/miniprojects/gallery/[id]/edit/page.tsx
+'use client'
 
 import { useParams, useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'

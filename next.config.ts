@@ -1,11 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
-        domains: ['lh3.googleusercontent.com'], // For Google provider images
+        domains: ['lh3.googleusercontent.com'],
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: '**.public.blob.vercel-storage.com', // Vercel Storage
+                hostname: '**.public.blob.vercel-storage.com',
             },
             // Add other allowed domains if needed
         ],
@@ -15,8 +15,11 @@ const nextConfig = {
     },
     experimental: {
         serverActions: {
-            bodySizeLimit: '4mb', // Set your desired limit (default is 1MB)
+            bodySizeLimit: '4mb',
         },
+    },
+    env: {
+        BLOB_READ_WRITE_TOKEN: process.env.BLOB_READ_WRITE_TOKEN,
     },
 }
 

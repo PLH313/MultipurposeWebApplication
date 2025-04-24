@@ -1,0 +1,140 @@
+﻿'use server'
+
+import prisma from '@/lib/prisma'
+import { getServerSession } from 'next-auth'
+import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
+import { revalidatePath } from 'next/cache'
+import { put } from '@vercel/blob'
+
+export async function getProducts(categorySlug?: string) {
+    const products = await prisma.product.findMany({
+        where: categorySlug ? { category: { slug: categorySlug } } : {},
+        include: { category: true },
+        orderBy: { createdAt: 'desc' }
+    })
+
+    return products.map(product => ({
+        ...product,
+        price: Number(product.price)
+    }))
+}
+
+export async function createCategory(name: string, slug: string) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) throw new Error('Unauthorized')
+
+    return await prisma.category.create({
+        data: { name, slug }
+    })
+}
+
+export async function getCategories() {
+    return prisma.category.findMany({
+        orderBy: { name: 'asc' }
+    })
+}
+
+export async function createProduct(formData: FormData) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) throw new Error('Unauthorized')
+
+    const price = parseInt(formData.get('price') as string)
+    const stock = parseInt(formData.get('stock') as string)
+    const imageFile = formData.get('file') as File
+
+    if (isNaN(price) || price < 0) throw new Error('Invalid price')
+    if (isNaN(stock) || stock < 0) throw new Error('Invalid stock')
+
+    const { url: imageUrl } = await put(`products/${imageFile.name}`, imageFile, {
+        access: 'public',
+        addRandomSuffix: true
+    })
+
+    await prisma.product.create({
+        data: {
+            title: formData.get('title') as string,
+            author: formData.get('author') as string,
+            description: formData.get('description') as string,
+            price: price,
+            stock: stock,
+            categoryId: formData.get('categoryId') as string,
+            imageUrl: imageUrl
+        }
+    })
+
+    revalidatePath('/miniprojects/productmanagement')
+}
+
+export async function deleteProduct(id: string) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) throw new Error('Unauthorized')
+
+    await prisma.product.delete({ where: { id } })
+    revalidatePath('/miniprojects/productmanagement')
+}
+
+export async function getProductById(id: string) {
+    const product = await prisma.product.findUnique({
+        where: { id },
+        select: {
+            id: true,
+            title: true,
+            author: true,
+            description: true,
+            price: true,
+            stock: true,
+            categoryId: true,
+            imageUrl: true,
+            category: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true
+                }
+            }
+        }
+    })
+
+    return product ? {
+        ...product,
+        price: Number(product.price)
+    } : null
+}
+
+export async function updateProduct(id: string, formData: FormData) {
+    const session = await getServerSession(authOptions)
+    if (!session?.user) throw new Error('Unauthorized')
+
+    const price = parseInt(formData.get('price') as string)
+    const stock = parseInt(formData.get('stock') as string)
+    const imageFile = formData.get('file') as File | null // Corrected field name
+    let imageUrl = formData.get('imageUrl') as string | undefined
+
+    // Validate inputs
+    if (isNaN(price) || price < 0) throw new Error('Invalid price')
+    if (isNaN(stock) || stock < 0) throw new Error('Invalid stock')
+
+    if (imageFile && imageFile.size > 0) {
+        const { url } = await put(`products/${imageFile.name}`, imageFile, {
+            access: 'public',
+            addRandomSuffix: true
+        })
+        imageUrl = url
+    }
+
+    // Update product data
+    await prisma.product.update({
+        where: { id },
+        data: {
+            title: formData.get('title') as string,
+            author: formData.get('author') as string,
+            description: formData.get('description') as string,
+            price: price,
+            stock: stock,
+            categoryId: formData.get('categoryId') as string,
+            imageUrl: imageUrl || null // Fallback to null if undefined
+        }
+    })
+
+    revalidatePath('/miniprojects/productmanagement')
+}

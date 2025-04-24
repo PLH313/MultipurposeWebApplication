@@ -7,7 +7,6 @@ import prisma from '@/lib/prisma'
 import { put } from '@vercel/blob'
 import { revalidatePath } from 'next/cache'
 
-// app/miniprojects/gallery/actions.ts
 export async function uploadImage(formData: FormData) {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) throw new Error('Unauthorized')
