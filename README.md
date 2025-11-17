@@ -87,15 +87,7 @@ npx prisma migrate dev --name init
 npx prisma generate
 ```
 
-4. Optionally, seed the database:
-
-```bash
-npm run seed
-# or
-yarn seed
-```
-
-## 6. Run the development server
+## 4. Run the development server
 
 ```bash
 npm run dev
@@ -105,22 +97,7 @@ yarn dev
 
 Open your browser at [http://localhost:3000](http://localhost:3000). The app should now be fully functional, including login/email verification, To-Do List, Blog, Gallery (PostgreSQL backend), and Book Store / E-Commerce with Vercel Blob for product images.
 
-## 7. Notes for Vercel Blob
-
-* Ensure `BLOB_READ_WRITE_TOKEN` is set in `.env`.
-* Files uploaded to Blob Storage are tied to this token.
-* Deleting or revoking the token will break access to existing files.
-
-## 8. Build for Production
-
-```bash
-npm run build
-npm start
-```
-
-Or deploy to Vercel using your GitHub repo, making sure to set environment variables in Vercel exactly like your `.env`.
-
-## 9. Useful commands
+## 5. Useful commands
 
 | Command                  | Description                   |
 | ------------------------ | ----------------------------- |
