@@ -87,7 +87,7 @@ npx prisma migrate dev --name init
 npx prisma generate
 ```
 
-## 4. Run the development server
+## 6. Run the development server
 
 ```bash
 npm run dev
@@ -97,7 +97,7 @@ yarn dev
 
 Open your browser at [http://localhost:3000](http://localhost:3000). The app should now be fully functional, including login/email verification, To-Do List, Blog, Gallery (PostgreSQL backend), and Book Store / E-Commerce with Vercel Blob for product images.
 
-## 5. Useful commands
+## 7. Useful commands
 
 | Command                  | Description                   |
 | ------------------------ | ----------------------------- |
