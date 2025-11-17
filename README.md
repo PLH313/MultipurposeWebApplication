@@ -130,14 +130,3 @@ Or deploy to Vercel using your GitHub repo, making sure to set environment varia
 | `npm run seed`           | Seed the database             |
 | `npx prisma migrate dev` | Run migrations                |
 | `npx prisma generate`    | Generate Prisma client        |
-
-## Summary
-
-* Multi-purpose app: login, to-do list, blog, gallery, and book store e-commerce
-* Uses Next.js 15 + React + Tailwind CSS + Prisma + PostgreSQL + NextAuth + Vercel Blob
-* Local development requires PostgreSQL, Gmail App Password, Vercel Blob token
-* Production deployment requires setting environment variables in Vercel and deploying via Git
-
-```
-
-
