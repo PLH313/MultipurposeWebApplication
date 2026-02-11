@@ -26,7 +26,7 @@ export default function SignInPage() {
             })
 
             if (result?.error) {
-                window.location.href = '/miniprojects'
+                setError(result.error)
             } else {
                 window.location.href = '/miniprojects'
             }
