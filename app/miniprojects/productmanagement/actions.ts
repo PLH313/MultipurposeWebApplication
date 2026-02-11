@@ -1,10 +1,11 @@
-﻿'use server'
+'use server'
 
 import prisma from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import { revalidatePath } from 'next/cache'
 import { put } from '@vercel/blob'
+import { del } from '@vercel/blob';
 import { ProductList } from '@/types/product'
 import { ProductDetail } from '@/types/product'
 export async function getProducts(options?: {
@@ -111,7 +112,25 @@ export async function deleteProduct(id: string) {
     const session = await getServerSession(authOptions)
     if (!session?.user) throw new Error('Unauthorized')
 
+    const product = await prisma.product.findUnique({
+        where: { id },
+        select: { imageUrl: true } 
+    })
+
+    if (!product) {
+        throw new Error('Product not found')
+    }
+
+    if (product.imageUrl) { 
+        try {
+            await del(product.imageUrl);
+        } catch (error) {
+            console.error("Warning: Không thể xóa ảnh", error);
+        }
+    }
+
     await prisma.product.delete({ where: { id } })
+    
     revalidatePath('/miniprojects/productmanagement')
 }
 
@@ -149,12 +168,19 @@ export async function updateProduct(id: string, formData: FormData) {
     const session = await getServerSession(authOptions)
     if (!session?.user) throw new Error('Unauthorized')
 
+    const currentProduct = await prisma.product.findUnique({
+        where: { id },
+        select: { imageUrl: true } 
+    });
+
+    if (!currentProduct) throw new Error('Product not found');
+
     const price = parseInt(formData.get('price') as string)
     const stock = parseInt(formData.get('stock') as string)
-    const imageFile = formData.get('file') as File | null // Corrected field name
-    let imageUrl = formData.get('imageUrl') as string | undefined
+    const imageFile = formData.get('file') as File | null 
+    
+    let newImageUrl = formData.get('imageUrl') as string | undefined
 
-    // Validate inputs
     if (isNaN(price) || price < 0) throw new Error('Invalid price')
     if (isNaN(stock) || stock < 0) throw new Error('Invalid stock')
 
@@ -163,10 +189,24 @@ export async function updateProduct(id: string, formData: FormData) {
             access: 'public',
             addRandomSuffix: true
         })
-        imageUrl = url
+        newImageUrl = url;
+
+        if (currentProduct.imageUrl) {
+            try {
+                await del(currentProduct.imageUrl);
+            } catch (error) {
+                console.error("Lỗi xóa ảnh cũ trên Blob:", error);
+            }
+        }
+    } 
+    else if (currentProduct.imageUrl && !newImageUrl) {
+         try {
+            await del(currentProduct.imageUrl);
+         } catch (error) {
+             console.error("Lỗi xóa ảnh cũ:", error);
+         }
     }
 
-    // Update product data
     await prisma.product.update({
         where: { id },
         data: {
@@ -176,10 +216,10 @@ export async function updateProduct(id: string, formData: FormData) {
             price: price,
             stock: stock,
             categoryId: formData.get('categoryId') as string,
-            imageUrl: imageUrl || null // Fallback to null if undefined
+            imageUrl: newImageUrl || null 
         }
     })
-
+    
     revalidatePath('/miniprojects/productmanagement')
 }
 export async function getTotalProductsCount(options?: {
