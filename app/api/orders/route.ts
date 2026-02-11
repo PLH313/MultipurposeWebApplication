@@ -6,7 +6,12 @@ import prisma from '@/lib/prisma'
 
 export async function POST(request: Request) {
     const session = await getServerSession(authOptions)
-    if (!session?.user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    
+    if (!session?.user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const userId = session.user.id as string 
 
     const { items, total } = await request.json()
 
@@ -19,7 +24,7 @@ export async function POST(request: Request) {
                 })
 
                 if (!product || product.stock < item.quantity) {
-                    throw new Error(`Sản phẩm "${item.title}" không đủ hàng (Còn: ${product?.stock || 0})`)
+                    throw new Error(`Sản phẩm "${item.title}" không đủ hàng`)
                 }
 
                 await tx.product.update({
@@ -34,7 +39,7 @@ export async function POST(request: Request) {
 
             const newOrder = await tx.order.create({
                 data: {
-                    userId: session.user.id,
+                    userId: userId, 
                     items: items, 
                     total: total,
                 }
