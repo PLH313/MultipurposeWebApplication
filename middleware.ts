@@ -1,24 +1,31 @@
-﻿    import { NextResponse } from 'next/server'
-    import type { NextRequest } from 'next/server'
-    import { getToken } from 'next-auth/jwt'
+// middleware.ts
+import { withAuth } from "next-auth/middleware"
+import { NextResponse } from "next/server"
 
-    export async function middleware(request: NextRequest) {
-        const token = await getToken({ req: request })
-        const { pathname } = request.nextUrl
+export default withAuth(
+  function middleware(req) {
+    const token = req.nextauth.token
+    const { pathname } = req.nextUrl
 
-        // Allow auth routes and API routes
-        if (pathname.startsWith('/auth') || pathname.startsWith('/api')) {
-            return NextResponse.next()
-        }
-
-        // Redirect to login if not authenticated
-        if (!token && !pathname.startsWith('/auth')) {
-            return NextResponse.redirect(new URL('/auth/signin', request.url))
-        }
-
-        return NextResponse.next()
+    if (token && pathname.startsWith('/auth')) {
+      return NextResponse.redirect(new URL('/miniprojects', req.url))
     }
+    
+    return NextResponse.next()
+  },
+  {
+    callbacks: {
+      authorized: ({ token }) => !!token,
+    },
+    pages: {
+      signIn: "/auth/signin", 
+    },
+  }
+)
 
-    export const config = {
-        matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)']
-    }
+export const config = {
+  matcher: [
+    "/miniprojects/:path*", 
+    "/api/projects/:path*", 
+  ]
+}
