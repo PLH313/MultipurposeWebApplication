@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -14,7 +14,9 @@ interface ProductFormProps {
 
 export default function ProductForm({ product, onSubmit }: ProductFormProps) {
     const [categories, setCategories] = useState<Awaited<ReturnType<typeof getCategories>>>([])
+    
     const [imageUrl, setImageUrl] = useState(product?.imageUrl ?? '')
+    
     const router = useRouter()
 
     useEffect(() => {
@@ -105,11 +107,13 @@ export default function ProductForm({ product, onSubmit }: ProductFormProps) {
                 <label className="block mb-2 font-medium">Category</label>
                 <select
                     name="categoryId"
+                    key={product?.categoryId || 'new'} 
+                    
                     defaultValue={product?.categoryId || ''}
                     className="w-full p-2 border rounded"
                     required
                 >
-                    <option value="">Select Category</option>
+                    <option value="" disabled>Select Category</option>
                     {categories.map((category) => (
                         <option key={category.id} value={category.id}>
                             {category.name}
@@ -131,6 +135,7 @@ export default function ProductForm({ product, onSubmit }: ProductFormProps) {
                     className="border p-2 w-full rounded"
                     required={!product}
                 />
+                
                 {imageUrl && (
                     <div className="mt-2 relative w-32 h-32">
                         <Image
@@ -144,19 +149,21 @@ export default function ProductForm({ product, onSubmit }: ProductFormProps) {
                 )}
             </div>
 
-            <button
-                type="submit"
-                className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600"
-            >
-                {product ? 'Update Product' : 'Add Product'}
-            </button>
-            <button
-                type="button"
-                onClick={() => router.push('/miniprojects/productmanagement')}
-                className="ml-4 bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600"
-            >
-                Cancel
-            </button>
+            <div className="flex pt-4">
+                <button
+                    type="submit"
+                    className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 transition-colors"
+                >
+                    {product ? 'Update Product' : 'Add Product'}
+                </button>
+                <button
+                    type="button"
+                    onClick={() => router.push('/miniprojects/productmanagement')}
+                    className="ml-4 bg-gray-500 text-white px-6 py-2 rounded hover:bg-gray-600 transition-colors"
+                >
+                    Cancel
+                </button>
+            </div>
         </form>
     )
 }
