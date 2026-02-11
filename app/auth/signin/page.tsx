@@ -11,7 +11,7 @@ export default function SignInPage() {
     const [error, setError] = useState('')
     const router = useRouter()
     const searchParams = useSearchParams()
-    const callbackUrl = searchParams.get('callbackUrl') || '/'
+    const callbackUrl = searchParams.get('callbackUrl') || '/miniprojects'
     const [verified, setVerifiedMessage] = useState(searchParams.get('verified'))
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -109,7 +109,7 @@ export default function SignInPage() {
                             className="font-medium text-black hover:text-gray-700 underline"
                         >
                             Sign up here
-                        </Link>
+                        </Link>`
                     </p>
                 </div>
             </div>
