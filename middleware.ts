@@ -6,8 +6,8 @@
         const token = await getToken({ req: request })
         const { pathname } = request.nextUrl
 
-        if (pathname.startsWith('/auth') || pathname.startsWith('/api')) {
-            return NextResponse.next()
+        if (token && pathname.startsWith('/auth')) {
+            return NextResponse.redirect(new URL('/', request.url))
         }
 
         if (!token && !pathname.startsWith('/auth')) {
