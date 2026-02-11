@@ -16,24 +16,32 @@ export default function SignInPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
+        setIsLoading(true)
         setVerifiedMessage(null)
         try {
+            console.log("Đang gửi yêu cầu đăng nhập tới Neon...");
             const result = await signIn('credentials', {
                 email,
                 password,
                 redirect: false
             })
 
-            if (result?.error) {
-                setError(result.error)
-            } else {
-                router.refresh()
-                router.push('/miniprojects')
-            }
-        } catch (err) {
-            setError('An error occurred. Please try again.')
+            console.log("Kết quả từ NextAuth:", result); 
+            
+        if (result?.error) {
+            setError("Email hoặc mật khẩu không đúng trong hệ thống Cloud");
+        } else {
+            console.log("Đăng nhập thành công, đang chuyển hướng...");
+            router.refresh();
+            window.location.href = '/miniprojects';
         }
-    }
+        } catch (err) {
+        console.error("Lỗi kết nối database:", err);
+        setError('Không thể kết nối tới Database Neon. Kiểm tra mạng hoặc Database URL.');
+        } finally {
+        setIsLoading(false);
+        }
+}
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
