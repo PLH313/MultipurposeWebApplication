@@ -5,6 +5,7 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import prisma from '@/lib/prisma'
 import { put } from '@vercel/blob'
+import { del } from '@vercel/blob';
 import { revalidatePath } from 'next/cache'
 
 export async function uploadImage(formData: FormData) {
@@ -43,12 +44,27 @@ export async function deleteImage(imageId: string) {
     const session = await getServerSession(authOptions)
     if (!session?.user?.id) throw new Error('Unauthorized')
 
-    await prisma.image.delete({
+    const image = await prisma.image.findUnique({
         where: {
             id: imageId,
             userId: session.user.id
         }
     })
+
+    if (!image) {
+        throw new Error('Image not found or unauthorized')
+    }
+
+    if (image.url) {
+        await del(image.url);
+    }
+
+    await prisma.image.delete({
+        where: {
+            id: imageId
+        }
+    })
+
     revalidatePath('/miniprojects/gallery')
 }
 
