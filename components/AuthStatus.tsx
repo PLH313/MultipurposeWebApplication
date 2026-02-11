@@ -6,7 +6,7 @@ import Link from 'next/link'
 export default function AuthStatus() {
     const { data: session, status } = useSession()
 
-    if (status === 'loading') return null // or loading spinner
+    if (status === 'loading') return null
     return (
         <div className="flex items-center gap-5">
             {session ? (
@@ -24,7 +24,7 @@ export default function AuthStatus() {
                 </>
             ) : (
                 <Link
-                    href="/miniprojects"
+                    href="/auth/signin"
                     className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm"
                 >
                     Sign In
