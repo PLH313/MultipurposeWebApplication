@@ -5,6 +5,8 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { useState } from 'react'
 import Link from 'next/link'
 
+export const dynamic = 'force-dynamic'
+
 export default function SignInPage() {
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -18,27 +20,22 @@ export default function SignInPage() {
         setError('')
         setVerifiedMessage(null)
         try {
-            console.log("Đang gửi yêu cầu đăng nhập tới Neon...");
             const result = await signIn('credentials', {
                 email,
                 password,
-                redirect: false
+                redirect: false,
+                callbackUrl
             })
 
-            console.log("Kết quả từ NextAuth:", result); 
-            
-        if (result?.error) {
-            setError("Email hoặc mật khẩu không đúng trong hệ thống Cloud");
-        } else {
-            console.log("Đăng nhập thành công, đang chuyển hướng...");
-            router.refresh();
-            window.location.href = '/miniprojects';
-        }
+            if (result?.error) {
+                setError(result.error)
+            } else {
+                window.location.href = '/miniprojects'
+            }
         } catch (err) {
-        console.error("Lỗi kết nối database:", err);
-        setError('Không thể kết nối tới Database Neon. Kiểm tra mạng hoặc Database URL.');
-        } 
-}
+            setError('An error occurred. Please try again.')
+        }
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-purple-50">
