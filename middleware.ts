@@ -1,31 +1,17 @@
-// middleware.ts
-import { withAuth } from "next-auth/middleware"
-import { NextResponse } from "next/server"
+    import { NextResponse } from 'next/server'
+    import type { NextRequest } from 'next/server'
+    import { getToken } from 'next-auth/jwt'
 
-export default withAuth(
-  function middleware(req) {
-    const token = req.nextauth.token
-    const { pathname } = req.nextUrl
+    export async function middleware(request: NextRequest) {
+        const token = await getToken({ req: request })
+        const { pathname } = request.nextUrl
 
-    if (token && pathname.startsWith('/auth')) {
-      return NextResponse.redirect(new URL('/miniprojects', req.url))
+        if (pathname.startsWith('/auth') || pathname.startsWith('/api')) {
+            return NextResponse.next()
+        }
+        return NextResponse.next()
     }
-    
-    return NextResponse.next()
-  },
-  {
-    callbacks: {
-      authorized: ({ token }) => !!token,
-    },
-    pages: {
-      signIn: "/auth/signin", 
-    },
-  }
-)
 
-export const config = {
-  matcher: [
-    "/miniprojects/:path*", 
-    "/api/projects/:path*", 
-  ]
-}
+    export const config = {
+        matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)']
+    }
