@@ -14,19 +14,27 @@ interface ProductFormProps {
 
 export default function ProductForm({ product, onSubmit }: ProductFormProps) {
     const [categories, setCategories] = useState<Awaited<ReturnType<typeof getCategories>>>([])
-    
     const [imageUrl, setImageUrl] = useState(product?.imageUrl ?? '')
     
+    const [selectedCategory, setSelectedCategory] = useState(product?.categoryId || '')
+
     const router = useRouter()
 
     useEffect(() => {
         getCategories().then(setCategories)
     }, [])
 
+    useEffect(() => {
+        if (product?.categoryId) {
+            setSelectedCategory(product.categoryId)
+        }
+    }, [product])
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         const formData = new FormData(e.currentTarget as HTMLFormElement)
         formData.set('imageUrl', imageUrl)
+        formData.set('categoryId', selectedCategory) 
         await onSubmit(formData)
     }
 
@@ -107,9 +115,8 @@ export default function ProductForm({ product, onSubmit }: ProductFormProps) {
                 <label className="block mb-2 font-medium">Category</label>
                 <select
                     name="categoryId"
-                    key={product?.categoryId || 'new'} 
-                    
-                    defaultValue={product?.categoryId || ''}
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
                     className="w-full p-2 border rounded"
                     required
                 >
@@ -135,7 +142,6 @@ export default function ProductForm({ product, onSubmit }: ProductFormProps) {
                     className="border p-2 w-full rounded"
                     required={!product}
                 />
-                
                 {imageUrl && (
                     <div className="mt-2 relative w-32 h-32">
                         <Image
