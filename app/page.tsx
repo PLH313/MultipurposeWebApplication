@@ -2,15 +2,18 @@
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/app/api/auth/[...nextauth]/auth-options'
 import Link from 'next/link'
-import { redirect } from 'next/navigation'
+import { redirect } from 'next/navigation' // Import hàm redirect
 
 export default async function Home() {
+    // 1. Lấy session
     const session = await getServerSession(authOptions)
 
+    // 2. NẾU ĐÃ ĐĂNG NHẬP: Đá sang trang Dashboard ngay lập tức
     if (session) {
         redirect('/miniprojects')
     }
 
+    // 3. NẾU CHƯA ĐĂNG NHẬP: Hiện giao diện chào mừng (Return duy nhất ở đây)
     return (
         <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow">
             <h1 className="text-2xl font-bold mb-6">Welcome to My App</h1>
