@@ -10,7 +10,7 @@
             return NextResponse.next()
         }
 
-        if (!token) {
+        if (!token && !pathname.startsWith('/auth')) {
             return NextResponse.redirect(new URL('/auth/signin', request.url))
         }
 
