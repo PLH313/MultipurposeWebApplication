@@ -24,7 +24,7 @@ export default function AuthStatus() {
                 </>
             ) : (
                 <Link
-                    href="/auth/signin"
+                    href="/miniprojects"
                     className="bg-blue-500 hover:bg-blue-600 px-3 py-1 rounded text-sm"
                 >
                     Sign In
