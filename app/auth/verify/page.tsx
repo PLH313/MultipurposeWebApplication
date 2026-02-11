@@ -1,4 +1,4 @@
-﻿// app/auth/verify/page.tsx
+// app/auth/verify/page.tsx
 'use client'
 import { useEffect } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
@@ -40,7 +40,7 @@ export default function VerifyPage() {
                         encodeURIComponent(
                             error instanceof Error ? error.message : 'Verification failed'
                         )
-                    }`
+                    }
                 )
             }
         }
