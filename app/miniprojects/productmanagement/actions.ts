@@ -177,6 +177,7 @@ export async function updateProduct(id: string, formData: FormData) {
 
     const price = parseInt(formData.get('price') as string)
     const stock = parseInt(formData.get('stock') as string)
+    const categoryId = formData.get('categoryId') as string
     const imageFile = formData.get('file') as File | null 
     
     let newImageUrl = formData.get('imageUrl') as string | undefined
@@ -215,7 +216,7 @@ export async function updateProduct(id: string, formData: FormData) {
             description: formData.get('description') as string,
             price: price,
             stock: stock,
-            categoryId: formData.get('categoryId') as string,
+            ...(categoryId && { categoryId }),
             imageUrl: newImageUrl || null 
         }
     })
