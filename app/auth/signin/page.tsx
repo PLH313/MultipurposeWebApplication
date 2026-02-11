@@ -16,7 +16,6 @@ export default function SignInPage() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
         setError('')
-        setIsLoading(true)
         setVerifiedMessage(null)
         try {
             console.log("Đang gửi yêu cầu đăng nhập tới Neon...");
@@ -38,9 +37,7 @@ export default function SignInPage() {
         } catch (err) {
         console.error("Lỗi kết nối database:", err);
         setError('Không thể kết nối tới Database Neon. Kiểm tra mạng hoặc Database URL.');
-        } finally {
-        setIsLoading(false);
-        }
+        } 
 }
 
     return (
