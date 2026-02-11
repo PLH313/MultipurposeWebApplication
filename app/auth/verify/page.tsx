@@ -40,7 +40,7 @@ export default function VerifyPage() {
                         encodeURIComponent(
                             error instanceof Error ? error.message : 'Verification failed'
                         )
-                    }
+                    }`
                 )
             }
         }
