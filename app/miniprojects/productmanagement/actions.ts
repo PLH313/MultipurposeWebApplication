@@ -8,6 +8,7 @@ import { put } from '@vercel/blob'
 import { del } from '@vercel/blob';
 import { ProductList } from '@/types/product'
 import { ProductDetail } from '@/types/product'
+
 export async function getProducts(options?: {
     category?: string
     search?: string
@@ -62,6 +63,7 @@ export async function getProducts(options?: {
         price: Number(p.price)
     })))
 }
+
 export async function createCategory(name: string, slug: string) {
     const session = await getServerSession(authOptions)
     if (!session?.user) throw new Error('Unauthorized')
@@ -164,6 +166,7 @@ export async function getProductById(id: string): Promise<ProductDetail | null> 
         price: Number(product.price)
     } : null
 }
+
 export async function updateProduct(id: string, formData: FormData) {
     const session = await getServerSession(authOptions)
     if (!session?.user) throw new Error('Unauthorized')
@@ -177,9 +180,10 @@ export async function updateProduct(id: string, formData: FormData) {
 
     const price = parseInt(formData.get('price') as string)
     const stock = parseInt(formData.get('stock') as string)
-    const categoryId = formData.get('categoryId') as string
-    const imageFile = formData.get('file') as File | null 
     
+    const categoryId = formData.get('categoryId') as string
+
+    const imageFile = formData.get('file') as File | null 
     let newImageUrl = formData.get('imageUrl') as string | undefined
 
     if (isNaN(price) || price < 0) throw new Error('Invalid price')
@@ -216,13 +220,14 @@ export async function updateProduct(id: string, formData: FormData) {
             description: formData.get('description') as string,
             price: price,
             stock: stock,
-            ...(categoryId && { categoryId }),
+            ...(categoryId && { categoryId }), 
             imageUrl: newImageUrl || null 
         }
     })
     
     revalidatePath('/miniprojects/productmanagement')
 }
+
 export async function getTotalProductsCount(options?: {
     category?: string
     search?: string
