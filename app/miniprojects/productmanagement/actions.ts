@@ -136,7 +136,6 @@ export async function deleteProduct(id: string) {
     revalidatePath('/miniprojects/productmanagement')
 }
 
-// In actions.ts
 export async function getProductById(id: string): Promise<ProductDetail | null> {
     const product = await prisma.product.findUnique({
         where: { id },
@@ -220,7 +219,7 @@ export async function updateProduct(id: string, formData: FormData) {
             description: formData.get('description') as string,
             price: price,
             stock: stock,
-            ...(categoryId && { categoryId }), 
+            ...(categoryId && { categoryId }),
             imageUrl: newImageUrl || null 
         }
     })
