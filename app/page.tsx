@@ -8,8 +8,8 @@ export default async function Home() {
     if (!session) {
         return (
             <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow">
-                <h1 className="text-2xl font-bold mb-6">Welcome to My App</h1>
-                <p className="mb-6">Please sign in to access your mini projects</p>
+                <h1 className="text-2xl font-bold mb-6 text-gray-900">Welcome to My App</h1>
+                <p className="mb-6 text-gray-600">Please sign in to access your mini projects</p>
                 <div className="flex flex-col space-y-4">
                     <Link
                         href="/auth/signin"
