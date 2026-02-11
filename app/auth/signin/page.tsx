@@ -21,14 +21,14 @@ export default function SignInPage() {
             const result = await signIn('credentials', {
                 email,
                 password,
-                redirect: false,
-                callbackUrl
+                redirect: false
             })
 
             if (result?.error) {
                 setError(result.error)
             } else {
-                window.location.href = '/miniprojects'
+                router.refresh()
+                router.push('/miniprojects')
             }
         } catch (err) {
             setError('An error occurred. Please try again.')
